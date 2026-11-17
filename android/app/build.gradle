@@ -5,7 +5,7 @@ def ksFile = rootProject.file("keystore.properties")
 if (ksFile.exists()) { ksProps.load(new FileInputStream(ksFile)) }
 
 // Version: set VERSION_NAME (e.g. 5.2.0) when building; GitHub Actions takes it from the release tag.
-def vName = System.getenv("VERSION_NAME") ?: "5.1.0"
+def vName = System.getenv("VERSION_NAME") ?: "5.2.1"
 def vp = (vName.tokenize('.-') + ["0", "0", "0"]).take(3).collect { (it.replaceAll("[^0-9]", "") ?: "0") as Integer }
 def vCode = vp[0] * 10000 + vp[1] * 100 + vp[2]
 

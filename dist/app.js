@@ -271,7 +271,7 @@ function freezeCheck(){S.frozen=S.frozen||{};if(S.freezes==null)S.freezes=0;let 
  const ms=mainStreak();if(ms>=7&&ms%7===0&&S.frEarnDay!==iso(T)&&activeDay(iso(T))){S.frEarnDay=iso(T);if(S.freezes<3){S.freezes++;S.birdMsg={m:"wow",t:ms+" days in a row! You earned a streak freeze. You have "+S.freezes+" now."}}}}
 function greet(){const h=new Date().getHours();return h>=5&&h<12?"Good morning":h>=12&&h<17?"Good afternoon":h>=17&&h<21?"Good evening":"Hey, night owl"}
 function birdSays(){const h=new Date().getHours(),nm=S.name?", "+S.name:"",ht=hToday(),left=ht.filter(x=>!hDone(x)),open=tdToday().filter(x=>!x.done),ms=mainStreak(),risk=left.map(x=>({h:x,s:hStreak(x)})).filter(x=>x.s>=3).sort((a,b)=>b.s-a.s)[0];
- if(S.birdMsg&&S.birdMsg.d!==undefined&&S.birdMsg.d!==iso(T))S.birdMsg=null;if(S.birdMsg){if(S.birdMsg.d===undefined)S.birdMsg.d=iso(T);return S.birdMsg}
+ if(S.birdMsg&&S.birdMsg.d!==undefined&&S.birdMsg.d!==iso(T))S.birdMsg=null;if(S.birdMsg){if(S.birdMsg.d===undefined)S.birdMsg.d=iso(T);S.birdMsg.seen=1;return S.birdMsg}
  if(S.sleepAt)return{m:"sleepy",t:"Shh, you’re asleep. Tap “I’m awake” when you’re up and I’ll do the maths."};
  if(!S.todos.length&&!S.habits.length)return{m:"happy",t:"I’m "+bn()+". Tap the + to add your first habit or task and I’ll help you keep it going."};
  if(risk&&h>=18)return{m:"worried",t:"Your "+risk.s+"-day "+risk.h.n+" streak ends at midnight. Quick, there’s still time!"};
@@ -614,7 +614,7 @@ async function initNative(){if(!native()){safeReady=true;return}const ln=plug("L
  const app=plug("App");
  try{app.addListener("backButton",()=>{if(PK){PK=null;drawPick();return}if($("#cele").classList.contains("show")){achQ=[];celebrate();return}if(W){closeWrap();return}if(S.tab==="ach"){S.tab="more";render();return}if(S.sheet){closeSheet();return}if(S.sub){S.sub=null}else if(S.tab==="more"){S.tab=S.prev||"today"}else if(S.openT||S.openP||S.openG){S.openT=S.openP=S.openG=null}else if(S.tab!=="today"){S.tab="today";scrollTo(0,0)}else{app.exitApp();return}render()})}catch(e){}
  try{app.addListener("pause",()=>{autoBackup()})}catch(e){}
- try{app.addListener("resume",async()=>{refreshDay();await widgetPull();if(S.updAuto!==false&&isAndroid()&&Date.now()-(S.updChecked||0)>3*36e5)checkUpdate(false);setTimeout(()=>maybeNudge(.6),2500);try{const x=await ln.checkExactNotificationSetting();exactState=x.exact_alarm;const p=await ln.checkPermissions();permState=p.display}catch(e){}render()})}catch(e){}
+ try{app.addListener("resume",async()=>{refreshDay();if(S.birdMsg&&S.birdMsg.seen)S.birdMsg=null;await widgetPull();if(S.updAuto!==false&&isAndroid()&&Date.now()-(S.updChecked||0)>3*36e5)checkUpdate(false);setTimeout(()=>maybeNudge(.6),2500);try{const x=await ln.checkExactNotificationSetting();exactState=x.exact_alarm;const p=await ln.checkPermissions();permState=p.display}catch(e){}render()})}catch(e){}
  try{await ln.registerActionTypes({types:ACTION_TYPES})}catch(e){}
  try{ln.addListener("localNotificationActionPerformed",a=>{notifAct(a)})}catch(e){}
  await widgetPull();render()}
@@ -1070,7 +1070,7 @@ document.addEventListener("click",async e=>{const a=e.target.closest("[data-a]")
  else if(A==="restorepick"){const i=$("#rfile");if(i){i.value="";i.click()}return}
  else if(A==="py"){S.py=(S.py||T.getFullYear())+ +D.v}
  else if(A==="talked"){const p=pById(id);p.talked=iso(T);S.checkins=(S.checkins||0)+1;toast("<b>Nice catch-up with "+esc(p.n)+"!</b><p class='sm'>I’ll nudge you again in "+(p.kit>=30?Math.round(p.kit/30)+" month"+(p.kit>=60?"s":""):Math.round(p.kit/7)+" week"+(p.kit>=14?"s":""))+".</p>")}
- else if(A==="birdtap"){buzz("tap");const b=document.querySelector(".birdcard .bubble p"),bb=document.querySelector(".birdbtn");if(b)b.textContent=CHEERS[Math.floor(Math.random()*CHEERS.length)];if(bb){bb.classList.remove("hop");void bb.offsetWidth;bb.classList.add("hop")}return}
+ else if(A==="birdtap"){buzz("tap");if(S.birdMsg){S.birdMsg=null;save()}const b=document.querySelector(".birdcard .bubble p"),bb=document.querySelector(".birdbtn");if(b)b.textContent=CHEERS[Math.floor(Math.random()*CHEERS.length)];if(bb){bb.classList.remove("hop");void bb.offsetWidth;bb.classList.add("hop")}return}
  else if(A==="text")S.text=+D.v;
  else if(A==="tg"){S[D.k]=D.inv?!a.checked:a.checked;if(D.k==="sys"&&a.checked&&native()){try{const p=await plug("LocalNotifications").requestPermissions();permState=p.display}catch(e){}}}
  else if(A==="exact"){try{await plug("LocalNotifications").changeExactNotificationSetting()}catch(e){}return}
@@ -1104,6 +1104,7 @@ const pEnd=()=>{if(lp){clearTimeout(lp.t);lp=null}if(drag){sw=null;endDrag();ret
 /* keep the screen fresh: new day, reminders becoming due */
 setInterval(()=>{const before=iso(T);refreshDay();const ae=document.activeElement,typing=ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName);if(!typing&&!S.sheet&&!sw&&!drag&&(before!==iso(T)||S.tab==="today"||S.tab==="todo"))render();if(!typing&&!sw&&!drag)maybeNudge(.08)},30000);
 setTimeout(()=>maybeNudge(.6),4000);
+if(S.birdMsg&&S.birdMsg.seen)S.birdMsg=null;
 const hasData=!!(S.todos.length||S.habits.length||S.moods.length||S.people.length||S.reminders.length||S.tx.length||S.w.length||S.sleep.length);
 if(!S.onboarded&&hasData)S.onboarded=true;
 if(S.owned==null){const v4=["party","shades","scarf","beanie","bow","bowtie","specs","phones","flower","chain","hearts","crown","wizard"],lv=xpInfo().lvl;S.owned=OUTFITS.filter(o=>v4.includes(o.id)&&o.lvl<=lv).map(o=>o.id);Object.values(S.outfit||{}).forEach(id=>{if(id&&!S.owned.includes(id))S.owned.push(id)})}
