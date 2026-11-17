@@ -2,10 +2,8 @@
 # One-time: repo Settings → Pages → Source: "GitHub Actions".
 name: Web app (iPhone)
 
+# Run it by hand from the Actions tab once Pages is switched on.
 on:
-  push:
-    branches: [main]
-    paths: ["dist/**", ".github/workflows/web-app.yml"]
   workflow_dispatch:
 
 permissions:

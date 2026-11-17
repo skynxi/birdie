@@ -16,37 +16,48 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Check the signing key is set up
+        id: key
         env:
           KS: ${{ secrets.BIRDIE_KEYSTORE_BASE64 }}
         run: |
           if [ -z "$KS" ]; then
-            echo "::error::Add the BIRDIE_KEYSTORE_BASE64, BIRDIE_STORE_PASSWORD, BIRDIE_KEY_ALIAS and BIRDIE_KEY_PASSWORD secrets first (see README). Without the same key, updates can't install over the app."
-            exit 1
+            echo "::notice::No signing key on GitHub yet, so nothing is built here. Releases are published with the APK attached by hand instead (see README)."
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
           fi
 
       - uses: actions/setup-node@v4
+        if: steps.key.outputs.ok == 'true'
         with:
           node-version: 20
           cache: npm
 
       - uses: actions/setup-java@v4
+        if: steps.key.outputs.ok == 'true'
         with:
           distribution: temurin
           java-version: 21
 
       - uses: android-actions/setup-android@v3
+        if: steps.key.outputs.ok == 'true'
 
       - name: Version from the tag
+        if: steps.key.outputs.ok == 'true'
         run: echo "VERSION_NAME=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
 
       - run: npm ci
+        if: steps.key.outputs.ok == 'true'
 
       - name: Point the in-app updater at this repo
+        if: steps.key.outputs.ok == 'true'
         run: echo "window.BIRDIE_REPO = \"${{ github.repository }}\";" > dist/config.js
 
       - run: npx cap sync android
+        if: steps.key.outputs.ok == 'true'
 
       - name: Restore the signing key
+        if: steps.key.outputs.ok == 'true'
         env:
           KS: ${{ secrets.BIRDIE_KEYSTORE_BASE64 }}
           SP: ${{ secrets.BIRDIE_STORE_PASSWORD }}
@@ -58,6 +69,7 @@ jobs:
           printf 'storeFile=../../keys/birdie-release.jks\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' "$SP" "$KA" "$KP" > android/keystore.properties
 
       - name: Build signed APK
+        if: steps.key.outputs.ok == 'true'
         working-directory: android
         run: |
           chmod +x gradlew
@@ -65,6 +77,7 @@ jobs:
           cp app/build/outputs/apk/release/app-release.apk "../Birdie-${VERSION_NAME}.apk"
 
       - name: Publish the release
+        if: steps.key.outputs.ok == 'true'
         uses: softprops/action-gh-release@v2
         with:
           files: Birdie-*.apk

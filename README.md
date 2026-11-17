@@ -31,6 +31,10 @@ It is built with [Capacitor](https://capacitorjs.com): the app itself is plain H
 
 ## Releasing an Android update
 
+**Without the key on GitHub (current setup):** build the APK locally (see "Building locally" below), then create a release on GitHub named after the version (for example `v5.3.0`) and attach the `.apk` file. The tag-triggered workflow skips the build when the key isn't set, so it never fails.
+
+**With the key on GitHub:**
+
 ```bash
 git add . && git commit -m "What changed"
 git tag v5.2.0
@@ -46,7 +50,7 @@ Version numbers: always go up (`v5.2.0`, then `v5.2.1` or `v5.3.0` …). Tags mu
 
 ## iPhone
 
-**Option A: web app (free, works today).** In the repo go to **Settings → Pages → Source: GitHub Actions**. The "Web app (iPhone)" workflow publishes Birdie to `https://skynxi.github.io/birdie/`. On the iPhone, open it in Safari, tap **Share → Add to Home Screen**. It opens full screen, works offline and updates itself after every push to `main`.
+**Option A: web app (free, works today).** In the repo go to **Settings → Pages → Source: GitHub Actions**, then run the "Web app (iPhone)" workflow from the Actions tab. It publishes Birdie to `https://skynxi.github.io/birdie/`. On the iPhone, open it in Safari, tap **Share → Add to Home Screen**. It opens full screen, works offline and updates itself after every push to `main`.
 What the web app can't do on iPhone: reminders when the app is closed, home-screen widgets, the sleep notification, and vibration. Use **Settings → Backup** now and then, since its data lives only in Safari's storage.
 
 **Option B: real iOS app (needs a Mac with Xcode).**
