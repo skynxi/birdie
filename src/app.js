@@ -18,9 +18,9 @@ const monday=d=>add(d,-((d.getDay()+6)%7));
 
 /* ================= state ================= */
 const KEY=window.BIRDIE_KEY||"birdie.data.v2",OLD="birdie.data.v1";
-const SAVED=["people","dates","calls","w","moods","todos","habits","water","sleep","goals","height","goal","text","inApp","sys","wRem","remT","skipLogged","bundle","escalate","quiet","review","reviewT","morning","morningT","goalNudge","sleepGoal","nextId","tx","budgets","moneySum","reminders","habitNudge","habitNudgeT","naps","lastBed","lastWake","wrapSeen","tipSeen","sleepAt","ach","muteRecap","muteSfx","debts","skin","name","frozen","freezes","freezesUsed","frEarnDay","birdMsg","lvlSeen","checkins","pots","lastBackup","appear","outfit","haptics","verSeen","owned","spent","seedBonus","birdName","onboarded","nudgePop","popLog","updRepo","updAuto","updChecked","updSkip","streakSave","waterNudge","obGift","updLater","autoBk","lastAutoBk","autoBkWhere","usage","stOn","stHome","stSleep","stSleepDis"];
+const SAVED=["people","dates","calls","w","moods","todos","habits","water","sleep","goals","height","goal","text","inApp","sys","wRem","remT","skipLogged","bundle","escalate","quiet","review","reviewT","morning","morningT","goalNudge","sleepGoal","nextId","tx","budgets","moneySum","reminders","habitNudge","habitNudgeT","naps","lastBed","lastWake","wrapSeen","tipSeen","sleepAt","ach","muteRecap","muteSfx","debts","skin","name","frozen","freezes","freezesUsed","frEarnDay","birdMsg","lvlSeen","checkins","pots","lastBackup","appear","outfit","haptics","verSeen","owned","spent","seedBonus","birdName","onboarded","nudgePop","popLog","updRepo","updAuto","updChecked","updSkip","streakSave","waterNudge","obGift","updLater","autoBk","lastAutoBk","autoBkWhere","usage","stOn","stHome","stSleep","stSleepDis","notes","fest","festCats","festOff","festGift"];
 const S={tab:"today",sub:null,pf:"all",tv:"today",gp:"week",mode:"day",hm:"log",mood:0,note:"",wIn:"",qa:"",sheet:null,form:{},editId:null,openT:null,openP:null,openG:null,hday:null,hmon:null,
- height:null,goal:null,text:1,inApp:true,sys:true,wRem:true,remT:"08:00",skipLogged:true,bundle:true,escalate:true,quiet:true,review:true,reviewT:"22:00",morning:true,morningT:"09:00",goalNudge:true,sleepGoal:8,nextId:1,tx:[],budgets:{},moneySum:true,reminders:[],naps:[],wrapSeen:{},tipSeen:false,sleepAt:null,ach:null,muteRecap:false,muteSfx:false,debts:[],dv:"owe",skin:"birdie",name:"",frozen:{},freezes:0,pots:[],checkins:0,appear:"dark",outfit:{},haptics:true,verSeen:null,jq:"",owned:null,spent:0,seedBonus:0,birdName:"",onboarded:false,nudgePop:true,popLog:{},updRepo:"",updAuto:true,updChecked:0,updSkip:"",streakSave:true,waterNudge:true,updLater:0,autoBk:true,lastAutoBk:0,autoBkWhere:"",usage:{},stOn:false,stHome:true,stSleep:null,stSleepDis:"",ob:0,obH:[],wPrev:null,lastBed:"23:00",lastWake:"07:00",pickMore:false,habitNudge:true,habitNudgeT:"20:00",mv:null,openX:null,
+ height:null,goal:null,text:1,inApp:true,sys:true,wRem:true,remT:"08:00",skipLogged:true,bundle:true,escalate:true,quiet:true,review:true,reviewT:"22:00",morning:true,morningT:"09:00",goalNudge:true,sleepGoal:8,nextId:1,tx:[],budgets:{},moneySum:true,reminders:[],naps:[],wrapSeen:{},tipSeen:false,sleepAt:null,ach:null,muteRecap:false,muteSfx:false,debts:[],dv:"owe",skin:"birdie",name:"",frozen:{},freezes:0,pots:[],checkins:0,appear:"dark",outfit:{},haptics:true,verSeen:null,jq:"",owned:null,spent:0,seedBonus:0,birdName:"",onboarded:false,nudgePop:true,popLog:{},updRepo:"",updAuto:true,updChecked:0,updSkip:"",streakSave:true,waterNudge:true,updLater:0,autoBk:true,lastAutoBk:0,autoBkWhere:"",usage:{},stOn:false,stHome:true,stSleep:null,stSleepDis:"",notes:[],fest:true,festCats:{big:true,nat:true,fam:true,other:false},festOff:[],festGift:true,openN:null,nq:"",ob:0,obH:[],wPrev:null,lastBed:"23:00",lastWake:"07:00",pickMore:false,habitNudge:true,habitNudgeT:"20:00",mv:null,openX:null,
  people:[],dates:[],calls:[],w:[],moods:[],todos:[],habits:[],water:{goal:8,log:{}},sleep:[],goals:[]};
 const FRESH=!window.BIRDIE_SEED&&!(()=>{try{return localStorage.getItem(KEY)}catch(e){return null}})();
 if(window.BIRDIE_SEED)try{localStorage.setItem(KEY,JSON.stringify(window.BIRDIE_SEED()))}catch(e){}
@@ -292,7 +292,7 @@ const CHEERS=["You’ve got this!","Proud of you!","Small steps, big wings.","Lo
 
 /* ================= keep in touch ================= */
 const kitDue=()=>S.people.filter(p=>p.kit>0&&diff(p.talked||iso(T))+p.kit<=0).sort((a,b)=>(a.talked||"").localeCompare(b.talked||""));
-const sinceTxt=d=>{const n=-diff(d||iso(T));return n<1?"today":n<14?n+" days ago":n<60?Math.round(n/7)+" weeks ago":Math.round(n/30)+" months ago"};
+const sinceTxt=d=>{const n=-diff(d||iso(T));return n<1?"today":n===1?"yesterday":n<14?n+" days ago":n<60?Math.round(n/7)+" weeks ago":Math.round(n/30)+" months ago"};
 
 /* ================= year in pixels + mood patterns ================= */
 function moodPatterns(){const md={};S.moods.forEach(m=>md[m.d]=m.v);const ks=Object.keys(md);if(ks.length<6)return[];const out=[];
@@ -321,6 +321,51 @@ async function doBackup(){const name="Birdie-backup-"+iso(T)+".json",json=JSON.s
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([json],{type:"application/json"}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);S.lastBackup=iso(T);save();toast("<b>Backup saved</b><p class='sm'>"+name+"</p>")}
 let pendingRestore=null;
 const fmtM=m=>{m=Math.round(m||0);return m<60?m+"m":Math.floor(m/60)+"h"+(m%60?" "+m%60+"m":"")};
+/* ---------- festivals & holidays in India (DoPT lists for 2026 and 2027; lunar dates can shift by a day) ---------- */
+const FCAT={big:"Festivals",nat:"National days",fam:"Days for loved ones",other:"More holidays"};
+const FEST=[
+ ["2026-11-24","Guru Nanak Jayanti","🙏","big"],["2026-12-24","Christmas Eve","🌟","other"],["2026-12-25","Christmas","🎄","big",1],
+ ["2027-01-01","New Year’s Day","🎉","big"],["2027-01-13","Lohri","🔥","big"],["2027-01-14","Makar Sankranti","🪁","big"],["2027-01-15","Pongal","🍚","other"],["2027-01-15","Guru Gobind Singh Jayanti","🙏","other"],
+ ["2027-01-26","Republic Day","🇮🇳","nat"],["2027-02-11","Basant Panchami","🌼","big"],["2027-02-14","Valentine’s Day","💘","fam",1],["2027-02-19","Shivaji Jayanti","🚩","other"],["2027-02-20","Guru Ravidas Jayanti","🙏","other"],
+ ["2027-03-02","Swami Dayananda Saraswati Jayanti","🙏","other"],["2027-03-05","Jamat-ul-Vida","🌙","other"],["2027-03-06","Maha Shivratri","🔱","big"],["2027-03-08","Women’s Day","💐","fam"],
+ ["2027-03-10","Eid ul-Fitr","🌙","big"],["2027-03-22","Holika Dahan","🔥","big"],["2027-03-23","Holi","🎨","big"],["2027-03-26","Good Friday","✝️","other"],["2027-03-28","Easter","🐣","other"],
+ ["2027-04-07","Chaitra Navratri begins (Ugadi, Gudi Padwa)","🪔","big"],["2027-04-14","Vaisakhi","🌾","big"],["2027-04-15","Ram Navami","🏹","big"],["2027-04-15","Bengali New Year, Bohag Bihu","🎊","other"],["2027-04-19","Mahavir Jayanti","🙏","other"],
+ ["2027-05-09","Mother’s Day","💐","fam",1],["2027-05-09","Rabindranath Tagore Jayanti","📖","other"],["2027-05-17","Bakrid (Eid al-Adha)","🌙","big"],["2027-05-20","Buddha Purnima","☸️","other"],
+ ["2027-06-16","Muharram","🌙","other"],["2027-06-20","Father’s Day","👔","fam",1],["2027-07-05","Rath Yatra","🛕","other"],["2027-08-01","Friendship Day","🤝","fam"],
+ ["2027-08-15","Independence Day","🇮🇳","nat"],["2027-08-15","Milad-un-Nabi","🌙","other"],["2027-08-15","Parsi New Year (Navroz)","🎊","other"],["2027-08-17","Raksha Bandhan","🧵","big",1],["2027-08-25","Janmashtami","🦚","big"],
+ ["2027-09-04","Ganesh Chaturthi","🐘","big"],["2027-09-05","Teachers’ Day","🍎","fam"],["2027-09-12","Onam","🌸","other"],["2027-10-02","Gandhi Jayanti","🕊️","nat"],
+ ["2027-10-07","Durga Ashtami","🪷","big"],["2027-10-09","Dussehra","🏹","big"],["2027-10-15","Valmiki Jayanti","🙏","other"],["2027-10-18","Karva Chauth","🌕","big",1],
+ ["2027-10-27","Dhanteras","🪙","big"],["2027-10-28","Choti Diwali","🪔","other"],["2027-10-29","Diwali","🪔","big",1],["2027-10-30","Govardhan Puja","🙏","big"],["2027-10-31","Bhai Dooj","💛","big",1],
+ ["2027-11-04","Chhath Puja","🌅","big"],["2027-11-14","Guru Nanak Jayanti","🙏","big"],["2027-11-14","Children’s Day","🧸","fam"],["2027-11-24","Guru Tegh Bahadur Martyrdom Day","🙏","other"],
+ ["2027-12-12","Hazrat Ali’s Birthday","🌙","other"],["2027-12-24","Christmas Eve","🌟","other"],["2027-12-25","Christmas","🎄","big",1]
+].map(([d,n,e,c,g],i)=>({id:d+":"+n,d,n,e,c,gift:!!g}));
+const FESTLINE={"Diwali":"Light a diya, call the family, and maybe one sweet too many 🍬","Holi":"Wear white, protect your phone, and go get colourful!","Raksha Bandhan":"Rakhi tied, gifts swapped, sibling teasing at maximum.","Christmas":"Cake, carols and a cosy evening 🎅","Eid ul-Fitr":"Eid Mubarak! Sevaiyan time 🍮","Bakrid (Eid al-Adha)":"Eid Mubarak! 🌙","Bhai Dooj":"A tilak, a treat and a call to your sibling 💛","Lohri":"Bonfire, peanuts and rewri tonight 🔥","Makar Sankranti":"Kite day! Watch out for manjha 🪁","Independence Day":"Jai Hind 🇮🇳","Republic Day":"Jai Hind 🇮🇳","Karva Chauth":"Moonrise check tonight 🌕","Janmashtami":"Makhan, matki and a late night 🦚","Ganesh Chaturthi":"Ganpati Bappa Morya! 🐘","Dussehra":"Good wins. Happy Dussehra!","Dhanteras":"Shopping day! Gold, silver or at least a new steel spoon 🪙","Mother’s Day":"Call your mom. Then call her again 💐","Guru Nanak Jayanti":"Gurpurab di lakh lakh vadhaiyan 🙏","New Year’s Day":"New year, new streaks. Let’s fly 🎉","Maha Shivratri":"Har Har Mahadev 🔱","Ram Navami":"Jai Shri Ram 🏹","Basant Panchami":"Wear something yellow today 🌼","Vaisakhi":"Happy harvest season 🌾","Chhath Puja":"Wishing your family a blessed Chhath 🌅","Navratri":"Nine nights of garba ahead 💃","Onam":"Sadhya time! 🌸","Govardhan Puja":"Annakut blessings to your family 🙏","Teachers’ Day":"Text a teacher who made a difference 🍎","Friendship Day":"Tell your favourite people they’re your favourite 🤝","Holika Dahan":"Bonfire tonight, colours tomorrow 🔥","Choti Diwali":"One more day to Diwali 🪔","Christmas Eve":"Cosy night in? 🌟","Father’s Day":"Give your dad a call (and maybe a hug) 👔"};
+const festOn=f=>S.fest!==false&&(S.festCats||{})[f.c]!==false&&!(S.festOff||[]).includes(f.id);
+const festUp=(days)=>FEST.filter(f=>festOn(f)&&f.d>=iso(T)&&diff(f.d)<=days);
+const festGiftTask=f=>({"Raksha Bandhan":"Buy rakhi and gifts","Diwali":"Diwali gifts and sweets","Bhai Dooj":"Bhai Dooj gift","Christmas":"Christmas gifts","Karva Chauth":"Karva Chauth gift","Mother’s Day":"Mother’s Day gift for mom","Father’s Day":"Father’s Day gift for dad","Valentine’s Day":"Valentine’s Day plan"})[f.n]||("Prepare for "+f.n);
+function festView(){const yr=FEST.filter(f=>f.d>=iso(T));let last="",rows="";yr.forEach(f=>{const mo=f.d.slice(0,7);if(mo!==last){rows+=`<p class="mh">${MONL[+mo.slice(5)-1]} ${mo.slice(0,4)}</p>`;last=mo}const off=(S.festOff||[]).includes(f.id),catOff=(S.festCats||{})[f.c]===false;
+  rows+=`<div class="r frow ${off||catOff?"off":""}"><span class="femo">${f.e}</span><div class="g"><b>${esc(f.n)}</b><small>${WD[P(f.d).getDay()]} ${P(f.d).getDate()} · ${diff(f.d)===0?"today":diff(f.d)===1?"tomorrow":"in "+diff(f.d)+" days"}${f.gift?" · 🎁":""}</small></div><label class="sw2" aria-label="Remind me about ${esc(f.n)}"><input type="checkbox" data-a="festtog" data-v="${esc(f.id)}" ${off||catOff?"":"checked"} ${catOff?"disabled":""}><span></span></label></div>`});
+ return`<div class="top"><div class="lt">${backBtn("sub")}<h1>Festivals & holidays</h1></div></div>
+ <div class="box sgb"><div class="tgr"><span class="g">Festival reminders<br><span class="mut sm">A greeting on the day, and a heads-up the evening before</span></span><label class="sw2" aria-label="Festival reminders"><input type="checkbox" data-a="tg" data-k="fest" ${S.fest!==false?"checked":""}><span></span></label></div>
+ <div class="tgr"><span class="g">🎁 Gift reminders<br><span class="mut sm">A week before Raksha Bandhan, Diwali, Bhai Dooj, Christmas, Mother’s and Father’s Day</span></span><label class="sw2" aria-label="Gift reminders"><input type="checkbox" data-a="tg" data-k="festGift" ${S.festGift!==false?"checked":""}><span></span></label></div></div>
+ <p class="sgh">Which ones</p><div class="chips wrap">${Object.entries(FCAT).map(([k,t])=>`<button class="chip ${(S.festCats||{})[k]!==false?"on":""}" data-a="festcat" data-v="${k}">${t}</button>`).join("")}</div>
+ <p class="sgh">Coming up</p><div class="list">${rows}</div>
+ <p class="sgn">Dates follow the Government of India holiday list. Festivals that follow the moon can move by a day in your city. Dates after 2027 arrive with app updates.</p>`}
+/* ---------- notes ---------- */
+let noteUndo=null;
+const noteTitle=n=>(n.t||"").trim()||((n.kind==="list"?(n.items||[]).map(i=>i.t).filter(Boolean)[0]:(n.b||"").split("\n").find(l=>l.trim()))||"").trim()||"Untitled note";
+const noteSnip=n=>n.kind==="list"?(n.items||[]).slice(0,4).map(i=>(i.done?"✓ ":"○ ")+i.t).join("\n"):(n.b||"");
+function notesBody(){const q=(S.nq||"").trim().toLowerCase(),all=(S.notes||[]).slice().sort((a,b)=>(b.pin?1:0)-(a.pin?1:0)||b.up-a.up),list=q?all.filter(n=>(noteTitle(n)+" "+(n.b||"")+" "+(n.items||[]).map(i=>i.t).join(" ")).toLowerCase().includes(q)):all;
+ const card=n=>{const it=n.items||[],dn=it.filter(i=>i.done).length;return`<button class="ncard" data-a="nopen" data-id="${n.id}">${n.pin?`<i class="npin">📌</i>`:""}<b>${esc(noteTitle(n))}</b><span class="nsnip">${esc(noteSnip(n)).slice(0,160)}</span><small>${n.kind==="list"&&it.length?dn+"/"+it.length+" ✓ · ":""}${sinceTxt(iso(new Date(n.up)))}</small></button>`};
+ return`${all.length>5?`<input id="nq" class="jsearch" value="${esc(S.nq||"")}" placeholder="Search notes" aria-label="Search notes" autocomplete="off">`:""}
+ <div class="g2 nnew"><button class="btn" data-a="nnew" data-v="text">${svg("pen")} New note</button><button class="btn" data-a="nnew" data-v="list">${svg("check")} New checklist</button></div>
+ ${list.length?`<div class="ngrid">${list.map(card).join("")}</div>`:all.length?empty("No notes match","Try another word."):empty("No notes yet","Ideas, meeting notes, packing lists, anything you want to keep.")}`}
+function noteView(){const n=(S.notes||[]).find(x=>x.id===S.openN);if(!n){S.openN=null;return V.todo()}const it=n.items||[];
+ return`<div class="top"><div class="lt"><button class="iconbtn" data-a="nclose" aria-label="Back">${ico("back")}</button></div><div class="nacts"><button class="iconbtn ${n.pin?"on":""}" data-a="npin" aria-label="${n.pin?"Unpin":"Pin"}">📌</button><button class="iconbtn" data-a="ntask" aria-label="Make it a to-do">${svg("task")}</button><button class="iconbtn" data-a="ndel" aria-label="Delete note">${svg("trash")}</button></div></div>
+ <input class="ntitle" data-nf="t" value="${esc(n.t||"")}" placeholder="Title" aria-label="Title" autocomplete="off">
+ ${n.kind==="list"?`<div class="nlist">${it.map((x,i)=>`<div class="nitem ${x.done?"dn":""}"><button class="ncheck" data-a="nitem" data-v="${i}" aria-label="${x.done?"Untick":"Tick"}">${x.done?"✓":""}</button><input data-nf="i${i}" value="${esc(x.t)}" aria-label="Item ${i+1}" autocomplete="off"><button class="xb" data-a="nidel" data-v="${i}" aria-label="Remove">×</button></div>`).join("")}<div class="nitem add"><span class="ncheck ghost">＋</span><input id="niadd" placeholder="Add an item" enterkeyhint="enter" aria-label="Add an item" autocomplete="off"></div></div>${it.some(x=>x.done)?`<button class="link" data-a="niclear">Clear ticked items</button>`:""}`
+ :`<textarea class="nbody" data-nf="b" placeholder="Start writing…" aria-label="Note">${esc(n.b||"")}</textarea>`}
+ <p class="sm mut nmeta">${n.kind==="list"?"Checklist":"Note"} · edited ${sinceTxt(iso(new Date(n.up)))}${n.kind==="text"?` · <button class="link" data-a="nkind">Turn into checklist</button>`:""}</p>`}
 /* ---------- screen time ---------- */
 let UST={perm:window.__previewAndroid?true:null,busy:false};
 async function refreshUsage(){if(!isAndroid()||!S.stOn||UST.busy)return;const w=plug("BirdieWidgets");UST.busy=true;
@@ -366,6 +411,7 @@ function agenda(){const now=new Date(),o=[],t0=iso(T);
  S.calls.filter(c=>!c.done&&c.d===t0).forEach(c=>{const at=atTime(T,c.t);if(at>now)o.push({k:at,when:c.t,i:"phone",t:"Call with "+callWho(c),s:c.topic})});
  const all=[];upcoming().filter(e=>e.n2<=2).forEach(e=>{const r=e.ref;all.push({k:0,when:e.n2===0?"Today":e.n2===1?"Tmrw":WD[add(T,e.n2).getDay()],i:e.k==="b"?"gift":"cal",c:e.k==="b"?"#db2777":"",t:e.k==="b"?e.n+"’s birthday":e.n,s:e.k==="b"?(r.gift?(r.bought?"Gift is ready":"Gift not bought yet"+(r.idea?" · "+r.idea:"")):zodiac(e.m,e.d)):""})});
  S.debts.filter(d=>!d.done&&d.due&&d.due<=iso(add(T,1))).forEach(d=>all.push({k:0,when:d.due<t0?"Late":d.due===t0?"Today":"Tmrw",i:"rupee",c:d.dir==="owe"?"#d03a52":"#178a5f",t:d.dir==="owe"?"Pay "+d.who+" "+inr(debtLeft(d)):d.who+" owes you "+inr(debtLeft(d)),s:d.note,act:`<button class="btn s" data-a="go" data-t="money" data-v="">Open</button>`}));
+ festUp(2).forEach(f=>all.push({k:0,when:diff(f.d)===0?"Today":diff(f.d)===1?"Tmrw":WD[P(f.d).getDay()],i:"spark",c:"var(--acc)",t:f.e+" "+f.n,s:diff(f.d)===0?(FESTLINE[f.n]||"Have a lovely day!"):f.gift?"Gift sorted?":""}));
  kitDue().forEach(p=>all.push({k:0,when:"Today",i:"heart",c:"var(--acc)",t:"Check in with "+p.n,s:"Last talked "+sinceTxt(p.talked),act:`<button class="btn s" data-a="talked" data-id="${p.id}">Talked</button>`}));
  const du=S.people.filter(p=>p.cad>0&&p.next<=t0);if(du.length)all.push({k:0,when:"Today",i:"people",c:"var(--acc)",t:plural(du.length,"follow-up")+" due",s:du.map(p=>p.n).join(", "),act:`<button class="btn s" data-a="go" data-t="people" data-v="work">Open</button>`});
  return all.concat(o.sort((a,b)=>a.k-b.k))}
@@ -569,6 +615,10 @@ function buildPlan(days){syncGoals();const o=[],today=iso(T),ws=wStreak(),nm=(S.
    if(D.getDate()===1){const pm=new Date(D.getFullYear(),D.getMonth()-1,1),st=moneyStats(iso(pm).slice(0,7));push(atTime(D,"10:00"),"🎬 Your "+MONL[pm.getMonth()]+" recap is here!",st.a.length?"In "+inr(st.inc)+", out "+inr(st.out)+", plus habits, sleep and goals. Tap to watch.":"Habits, sleep, tasks and goals. Tap to watch.","wrap")}
    if(D.getMonth()===0&&D.getDate()===1)push(atTime(D,"11:00"),"🎆 Your "+(D.getFullYear()-1)+" Birdie Wrapped is here!","A whole year of streaks, sleep and goals. Grab a snack 🍿","wrap")}
   S.goals.filter(x=>x.due===ds&&x.cur<x.target).forEach(g=>push(atTime(D,"09:00"),"⏳ Last day: "+g.s,(+g.cur.toFixed(2))+" of "+g.target+" "+g.unit+" so far. Final push!","goal"))}
+ if(S.fest!==false)FEST.filter(f=>festOn(f)&&f.d>=today&&diff(f.d)<days+8).forEach(f=>{const n=diff(f.d),D_=P(f.d),line=FESTLINE[f.n]||"Wishing you and your family a lovely day.";
+  if(n>=0&&n<days)push(atTime(D_,S.morningT<"10:00"?S.morningT:"09:00"),f.e+" Happy "+f.n+(nm?", "+nm:"")+"!",line,"fest",f.gift?{act:"festwish"}:{});
+  if(f.c!=="other"&&n-1>=0&&n-1<days)push(atTime(add(D_,-1),"19:00"),f.e+" Tomorrow is "+f.n,f.gift?"Gift and plans sorted? Tap to add a to-do.":"Plans for tomorrow?","fest",f.gift?{act:"festprep",data:{task:festGiftTask(f),fd:f.d}}:{});
+  if(f.gift&&S.festGift!==false&&n-7>=0&&n-7<days)push(atTime(add(D_,-7),"18:00"),"🎁 "+f.n+" is a week away","Time to sort the gift so it’s not a last-minute rush.","fest",{act:"festprep",data:{task:festGiftTask(f),fd:f.d}})});
  S.calls.filter(c=>!c.done&&c.d>=today).forEach(c=>push(new Date(atTime(P(c.d),c.t)-c.lead*6e4),"📞 Call with "+callWho(c)+(c.lead?" in "+c.lead+" min":" now"),(c.topic?c.topic+". ":"")+"Grab your notes!","call"));
  S.todos.filter(x=>!x.done&&x.rem&&x.d>=today).forEach(x=>{const sb=x.subs||[];push(atTime(P(x.d),x.rem),(x.star?"⭐ ":"📌 ")+x.t,pk(x.id+x.d,["Now’s the time! Done, or snooze it?","Knock it out, or snooze for 15 min.","Future you will thank you 🙌"])+(sb.length?" · "+sb.filter(y=>y.done).length+"/"+sb.length+" steps":""),"todo",{act:"todo",data:{tid:x.id}})});
  upcoming().forEach(e=>{const b=e.k==="b",r=e.ref,giftDue=b&&r.gift&&!r.bought,offs=new Set(r.rem);if(giftDue&&S.escalate)[7,3,1,0].forEach(v=>offs.add(v));
@@ -645,13 +695,13 @@ async function initNative(){if(!native()){safeReady=true;return}const ln=plug("L
  try{let p=await ln.checkPermissions();if(S.onboarded&&(p.display==="prompt"||p.display==="prompt-with-rationale"))p=await ln.requestPermissions();permState=p.display}catch(e){}
  try{const x=await ln.checkExactNotificationSetting();exactState=x.exact_alarm}catch(e){}
  const app=plug("App");
- try{app.addListener("backButton",()=>{if(PK){PK=null;drawPick();return}if($("#cele").classList.contains("show")){achQ=[];celebrate();return}if(W){closeWrap();return}if(S.tab==="ach"){S.tab="more";render();return}if(S.sheet){closeSheet();return}if(S.sub){S.sub=null}else if(S.tab==="more"){S.tab=S.prev||"today"}else if(S.openT||S.openP||S.openG){S.openT=S.openP=S.openG=null}else if(S.tab!=="today"){S.tab="today";scrollTo(0,0)}else{app.exitApp();return}render()})}catch(e){}
+ try{app.addListener("backButton",()=>{if(PK){PK=null;drawPick();return}if($("#cele").classList.contains("show")){achQ=[];celebrate();return}if(W){closeWrap();return}if(S.tab==="ach"){S.tab="more";render();return}if(S.sheet){closeSheet();return}if(S.openN!=null){S.openN=null}else if(S.sub){S.sub=null}else if(S.tab==="more"){S.tab=S.prev||"today"}else if(S.openT||S.openP||S.openG){S.openT=S.openP=S.openG=null}else if(S.tab!=="today"){S.tab="today";scrollTo(0,0)}else{app.exitApp();return}render()})}catch(e){}
  try{app.addListener("pause",()=>{autoBackup()})}catch(e){}
  try{app.addListener("resume",async()=>{refreshDay();setTimeout(refreshUsage,300);if(S.birdMsg&&S.birdMsg.seen)S.birdMsg=null;await widgetPull();if(S.updAuto!==false&&isAndroid()&&Date.now()-(S.updChecked||0)>3*36e5)checkUpdate(false);setTimeout(()=>maybeNudge(.6),2500);try{const x=await ln.checkExactNotificationSetting();exactState=x.exact_alarm;const p=await ln.checkPermissions();permState=p.display}catch(e){}render()})}catch(e){}
  try{await ln.registerActionTypes({types:ACTION_TYPES})}catch(e){}
  try{ln.addListener("localNotificationActionPerformed",a=>{notifAct(a)})}catch(e){}
  await widgetPull();render()}
-const TABOF={w:"habits",fu:"people",call:"people",todo:"todo",review:"today",morning:"todo",date:"people",habit:"habits",habitnudge:"habits",kit:"people",wrap:"today",goal:"goals",money:"money",custom:"today",streak:"today",water:"habits"};
+const TABOF={fest:"today",w:"habits",fu:"people",call:"people",todo:"todo",review:"today",morning:"todo",date:"people",habit:"habits",habitnudge:"habits",kit:"people",wrap:"today",goal:"goals",money:"money",custom:"today",streak:"today",water:"habits"};
 function notifObj(id,x,at,tabOf){const n={id,title:x.a,body:x.b||"",largeBody:x.b||"",summaryText:bn()+" 🐦",schedule:{at,allowWhileIdle:true},channelId:"birdie",smallIcon:"ic_stat_birdie",iconColor:"#FF8A2B",extra:{tab:(tabOf||TABOF)[x.type]||"today",type:x.type,act:x.act||"",...(x.data||{})}};
  if(x.act)n.actionTypeId=x.act;if(x.list&&x.list.length>1)n.inboxList=x.list.slice(0,6);return n}
 const ACTION_TYPES=[
@@ -663,7 +713,9 @@ const ACTION_TYPES=[
  {id:"weight",actions:[{id:"wlog",title:"⚖️ Log weight",input:true,inputButtonTitle:"Save",inputPlaceholder:"e.g. 62.5"}]},
  {id:"custom",actions:[{id:"ok",title:"✓ Got it"},{id:"snooze10",title:"⏰ 10 min"}]},
  {id:"kit",actions:[{id:"talked",title:"✓ We talked"}]},
- {id:"gift",actions:[{id:"gift",title:"🎁 Gift bought"}]}];
+ {id:"gift",actions:[{id:"gift",title:"🎁 Gift bought"}]},
+ {id:"festprep",actions:[{id:"festtodo",title:"＋ Add a to-do"}]},
+ {id:"festwish",actions:[{id:"open",title:"Open Birdie"}]}];
 async function snoozeN(n,min){try{const x=n.extra||{},ln=plug("LocalNotifications");const c={id:500000+Math.floor(Math.random()*90000),title:n.title,body:n.body||"",largeBody:n.body||"",summaryText:bn()+" 🐦",schedule:{at:new Date(Date.now()+min*6e4),allowWhileIdle:true},channelId:"birdie",smallIcon:"ic_stat_birdie",iconColor:"#FF8A2B",extra:x};if(x.act)c.actionTypeId=x.act;await ln.schedule({notifications:[c]})}catch(e){}}
 async function notifAct(a){const n=(a&&a.notification)||{},x=n.extra||{},id=a&&a.actionId,v=String((a&&a.inputValue)||"").trim(),k=iso(T);let msg="",sub="";refreshDay();
  if(x.test&&id&&id!=="tap"){toast("<b>Buttons work! 🎉</b><p class='sm'>You tapped “"+esc(id)+"”.</p>");return}
@@ -681,6 +733,7 @@ async function notifAct(a){const n=(a&&a.notification)||{},x=n.extra||{},id=a&&a
  else if(id==="talked"){String(x.pids||"").split(",").map(Number).forEach(pid=>{const p=pById(pid);if(p){p.talked=k;S.checkins=(S.checkins||0)+1}});msg="💌 Nice catch-up!";sub="I’ll nudge you again later."}
  else if(id==="gift"){const p=pById(+x.pid);if(p){p.bought=true;msg="🎁 Gift ticked off";sub="for "+p.n}}
  else if(id==="ok"){msg="✓ Got it";sub=""}
+ else if(id==="festtodo"){const due=x.fd&&diff(x.fd)>2?iso(add(P(x.fd),-2)):iso(T);S.todos.push({id:nid(),t:x.task||"Festival prep",d:due,rem:"",rep:"none",star:true,subs:[],done:false,ord:maxOrd()+1});msg="✓ Added: "+(x.task||"Festival prep");sub="Due "+dl(due);S.tab="todo"}
  if(x.tab&&!["addtask","bed"].includes(id))S.tab=x.tab==="habits"&&id.startsWith("water")?"today":x.tab;S.sub=null;buzz("done");save();render();if(msg)toast("<b>"+esc(msg)+"</b>"+(sub?"<p class='sm'>"+esc(sub)+"</p>":""))}
 async function scheduleAll(){if(!native())return;const ln=plug("LocalNotifications");
  try{const p=await ln.getPending();const mine=(p.notifications||[]).filter(n=>n.id<500000);if(mine.length)await ln.cancel({notifications:mine.map(n=>({id:n.id}))});
@@ -708,7 +761,7 @@ today(){const h=new Date().getHours(),ht=hToday(),open=tdToday().filter(x=>!x.do
  <div class="sec"><h2>To-do</h2><span class="sm mut">${ts.a.length?ts.dn.length+" of "+ts.a.length+" done":""}</span></div>
  <div class="list">${open.slice(0,5).map(x=>tdRow(x,true,true)).join("")||(ts.a.length?empty("All done for today"):`<button class="ghost in" data-a="sheet" data-v="task">+ Add a task for today</button>`)}</div>${open.length>5?`<button class="link" data-a="tab" data-t="todo">See all ${open.length} tasks ›</button>`:""}
  <div class="sec"><h2>Coming up</h2></div><div class="list">${ag.map(x=>`<div class="r ag ${x.now?"now":""}"><span class="agt">${x.when}</span><span class="hi sm2" style="--hc:${x.c||"var(--acc)"}">${svg(x.i)}</span><div class="g"><h3>${esc(x.t)}</h3>${x.s?`<p class="sm mut">${esc(x.s)}</p>`:""}</div>${x.act?x.act:""}</div>`).join("")||empty("Nothing else today","Reminders, birthdays and follow-ups show up here.")}</div>`},
-todo(){const{a,dn,left}=tdStats(),pct=a.length?Math.round(dn.length/a.length*100):0;let body="";
+todo(){if(S.openN!=null)return noteView();const{a,dn,left}=tdStats(),pct=a.length?Math.round(dn.length/a.length*100):0;let body="";
  if(S.tv==="today")body=`${a.length?`<div class="prog"><span><b>${dn.length}</b> of ${a.length} done</span><div class="bar"><i style="width:${pct}%"></i></div></div>`:""}
  <div class="qa"><input id="qa" data-bind="qa" value="${esc(S.qa)}" aria-label="Quick add a task for today" autocomplete="off" enterkeyhint="done"><button class="btn p" data-a="qadd">Add</button></div>
  <div class="list" id="tdl">${a.map(x=>tdRow(x,true)).join("")||empty("Nothing on today’s list","Type above to add one.")}</div>
@@ -721,7 +774,8 @@ todo(){const{a,dn,left}=tdStats(),pct=a.length?Math.round(dn.length/a.length*100
   body=`<div class="r sb" style="border:0;padding:0 0 10px"><button class="iconbtn" data-a="hmon" data-v="-1" aria-label="Previous month">${ico("left")}</button><b>${MONL[mo]} ${y}</b><button class="iconbtn" data-a="hmon" data-v="1" aria-label="Next month" ${y===T.getFullYear()&&mo===T.getMonth()?"disabled":""}>${ico("right")}</button></div>
   <div class="cal">${["M","T","W","T","F","S","S"].map(x=>`<b>${x}</b>`).join("")}${cells}</div><p class="sm mut" style="margin:10px 0 0">${plural(tot,"task")} finished in ${MONL[mo]}.</p>
   <h2>${dl(sd)}</h2><div class="list">${list.map(x=>`<div class="tdo dn"><div class="g"><p class="tt">${esc(x.t)}</p><p class="sm mut">Done ${x.at||""}</p></div></div>`).join("")||empty("Nothing finished this day")}</div>`}
- return`<div class="top"><h1>To-do</h1>${gear()}</div><div class="seg">${[["today","Today"],["next","Upcoming"],["hist","History"]].map(([k,t])=>`<button class="${S.tv===k?"on":""}" data-a="tv" data-v="${k}">${t}</button>`).join("")}</div>${body}`},
+ if(S.tv==="notes")body=notesBody();
+ return`<div class="top"><h1>${S.tv==="notes"?"Notes":"To-do"}</h1>${gear()}</div><div class="seg">${[["today","Today"],["next","Upcoming"],["notes","Notes"],["hist","History"]].map(([k,t])=>`<button class="${S.tv===k?"on":""}" data-a="tv" data-v="${k}">${t}</button>`).join("")}</div>${body}`},
 people(){const ups=upcoming(),wk=workers(),dueP=wk.filter(p=>p.dd<=0),ct=callsFor(iso(T)),f=S.pf;
  const grouped=list=>{const g={},ord=[];list.forEach(e=>{const oc=add(T,e.n2),k=MONL[oc.getMonth()]+(oc.getFullYear()!==T.getFullYear()?" "+oc.getFullYear():"");if(!g[k]){g[k]=[];ord.push(k)}g[k].push(e)});return ord.map(k=>`<p class="mh">${k}</p><div class="list">${g[k].map(dateRow).join("")}</div>`).join("")};
  let body="";
@@ -781,9 +835,11 @@ more(){const tg=(a,t,c,inv)=>`<div class="tgr"><span class="g">${t}<br><span cla
   ${S.sys?grp("Your day",`${tg("morning","☀️ Morning briefing","Your tasks, calls, birthdays and habits. Add a task straight from the notification")}${S.morning?tm("morningT","Time"):""}${tg("review","🌙 Night wrap-up","What’s left, rate your day, and “Going to bed”")}${S.review?tm("reviewT","Time"):""}`)
   +grp("Streaks and habits",`${tg("habitNudge","🔥 Habit nudge","The habits you haven’t ticked off yet")}${S.habitNudge?tm("habitNudgeT","Time"):""}${tg("streakSave","🚨 Streak saver","At 8:30 PM if nothing’s done yet, so your streak survives")}${tg("waterNudge","💧 Hydration nudges","11 AM, 2 PM and 5 PM when you’re behind, with a +1 glass button")}`)
   +grp("Check-ins",`${tg("wRem","⚖️ Weigh-in","Type your weight right in the notification")}${S.wRem?tm("remT","Time"):""}${tg("goalNudge","🎯 Goals check-in","Sunday evenings, plus each goal’s last day")}${tg("moneySum","🎬 Recaps","Your week (Mondays), month (the 1st) and year in review")}`):""}
+  <p class="sgh">Festivals and holidays</p><button class="box srow1" data-a="sub" data-v="fest"><span class="femo">🪔</span><span class="g"><b>Festivals & holidays</b><small>${S.fest!==false?(()=>{const n=festUp(400).length,nx=festUp(400)[0];return n+" coming up"+(nx?" · next: "+nx.n+" "+(diff(nx.d)===0?"today":diff(nx.d)===1?"tomorrow":"in "+diff(nx.d)+" days"):"")})():"Off"}</small></span><span class="mut">›</span></button>
   ${grp("Inside the app",`${tg("nudgePop","Pop-ups from "+esc(bn()),"A friendly nudge if nothing’s done yet today")}${tg("inApp","Banners","Reminder banners on Today and To-do")}`)}
   <div class="r sb" style="border:0;padding:0;margin:26px 2px 8px"><p class="sgh" style="margin:0">Your reminders</p><button class="btn s" data-a="sheet" data-v="reminder">+ New</button></div><div class="list">${S.reminders.map(remRow).join("")||empty("No custom reminders yet","Anything you want a nudge about: vitamins, call home, check the markets.")}</div>
   <button class="btn" style="width:100%;margin-top:16px" data-a="notify">Send me a test notification</button>`}
+ if(sub==="fest")return festView();
  if(sub==="sound")return`${head("Sound & haptics")}
   ${grp("Haptics",tg("haptics","Vibration","Little buzzes when you tick things off, level up or scroll a picker")+`<button class="btn s" style="margin-top:10px" data-a="buzztest">Feel it</button>`,"Some phones turn off touch vibration in their own settings.")}
   ${grp("Sounds",tg("muteSfx","Celebration chime","Plays when you win a trophy or buy an outfit",1)+tg("muteRecap","Recap music","Background music in your weekly, monthly and yearly recaps",1)+`<button class="btn s" style="margin-top:10px" data-a="chimetest">Play the chime</button>`)}
@@ -837,7 +893,7 @@ const SH={
 pick(){const wt=wToday(),d=daily(),lw=d.length?d[d.length-1].kg:null,sl=S.sleep.slice().sort((a,b)=>a.d.localeCompare(b.d)).pop(),mo=S.pickMore;
  const row=([k,i,t,ds,a])=>`<button data-a="${a||"sheet"}" data-v="${k}"><span class="hi sm2">${svg(i)}</span><span class="g"><b>${t}</b>${ds?`<small>${ds}</small>`:""}</span><span class="mut">›</span></button>`;
  return`<h2 style="margin-top:0">Quick log</h2><div class="ql"><button data-a="wplus1"><span class="hi" style="--hc:var(--acc)">${svg("drop")}</span><b>+1 glass</b><small>${wt} of ${S.water.goal} today</small></button><button data-a="sheet" data-v="weight"><span class="hi" style="--hc:var(--acc)">${svg("scale")}</span><b>Weight</b><small>${lw?"Last "+lw.toFixed(1)+" kg":"First weigh-in"}</small></button>${S.sleepAt?`<button data-a="awake" class="on"><span class="hi" style="--hc:var(--acc)">${svg("sun")}</span><b>I’m awake</b><small>Asleep since ${fmtT(hm(new Date(S.sleepAt)))}</small></button>`:`<button data-a="tobed"><span class="hi" style="--hc:var(--acc)">${svg("moon")}</span><b>Going to bed</b><small>${sl&&diff(sl.d)===0?fmtDur(sleepMin(sl))+" last night":"Starts the sleep timer"}</small></button>`}</div>
- <h2>Add</h2><div class="al">${[["task","task","Task","For your to-do list"],["bday","gift","Birthday","Name and date, that’s it"],["reminder","bell","Reminder","A nudge at a time you pick"],["out","rupee","Money","Expense or income","msheet"]].map(row).join("")}</div>
+ <h2>Add</h2><div class="al">${[["task","task","Task","For your to-do list"],["bday","gift","Birthday","Name and date, that’s it"],["reminder","bell","Reminder","A nudge at a time you pick"],["text","pen","Note","Ideas, lists, anything to keep","nnew"],["out","rupee","Money","Expense or income","msheet"]].map(row).join("")}</div>
  <button class="morebtn" data-a="pickmore" aria-expanded="${!!mo}">${mo?"Show less":"More: person, date, call, habit, goal, mood"}</button>${mo?`<div class="al">${[["person","person","Person or work contact"],["date","cal","Other yearly date"],["call","phone","Call"],["habit","spark","New habit"],["goal","flag","Goal"],["mood","smile","Mood"],["debt","rupee","Money owed (IOU)"]].map(row).join("")}</div>`:""}`},
 task(){const f=S.form;return`<h2 style="margin-top:0">${S.editId?"Edit task":"New task"}</h2><label class="f" style="margin-top:0">Task</label><input data-bind="form.t" value="${esc(f.t)}" autocomplete="off" id="ft">
  <div class="g2"><div><label class="f">Day</label>${pf("form.d","date",f.d)}</div><div><label class="f">Reminder</label>${pf("form.rem","time",f.rem,{clear:1,none:"No reminder"})}</div></div>
@@ -962,13 +1018,15 @@ function pruneOnce(){if(!S.reminders||!S.reminders.length)return;const now=new D
 function render(){pruneOnce();syncGoals();freezeCheck();checkAch();document.documentElement.dataset.skin="birdie";document.documentElement.dataset.mode=S.appear||"dark";document.documentElement.style.fontSize=17*S.text+"px";if(!S.onboarded){$("#app").innerHTML=onboardView();$("#nav").innerHTML="";$("#fab").hidden=true;document.body.classList.add("obmode");if(S.ob===5)setTimeout(()=>confetti($("#cfx"),["#fff",cssv("--acc"),cssv("--beak"),"#3EC6B5","#FF5C8A"]),60);if(!S.sheet){$("#sheet").classList.remove("show");$("#ov").classList.remove("show")}save();return}document.body.classList.remove("obmode");
  $("#app").innerHTML=S.tab==="ach"?achView():S.tab==="wardrobe"?wardrobeView():V[S.tab]();
  $("#nav").innerHTML=TABS.map(([k,t])=>`<button class="${S.tab===k?"on":""}" data-a="tab" data-t="${k}" aria-label="${t}">${ico(k)}${t}</button>`).join("");
- $("#fab").hidden=S.tab==="more"||S.tab==="ach"||S.tab==="wardrobe"||!!S.sub;
+ $("#fab").hidden=S.tab==="more"||S.tab==="ach"||S.tab==="wardrobe"||!!S.sub||(S.tab==="todo"&&S.openN!=null);
  const sh=$("#sheet"),ov=$("#ov");if(S.sheet){sh.innerHTML=`<div class="grab"></div><button class="xb shx" data-a="ov" aria-label="Close">×</button>`+SH[S.sheet]();sh.classList.add("show");ov.classList.add("show");sh.setAttribute("aria-hidden","false")}else{sh.classList.remove("show");ov.classList.remove("show");sh.setAttribute("aria-hidden","true")}
  save()}
 function toast(h){const e=$("#sys");e.innerHTML=h;e.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("show"),3000)}
 
 /* ================= input ================= */
 document.addEventListener("input",e=>{const el=e.target;
+ if(el.dataset.nf){const n=(S.notes||[]).find(x=>x.id===S.openN);if(!n)return;const f=el.dataset.nf;if(f==="t")n.t=el.value;else if(f==="b"){n.b=el.value;el.style.height="auto";el.style.height=el.scrollHeight+"px"}else if(f[0]==="i"){const it=n.items[+f.slice(1)];if(it)it.t=el.value}n.up=Date.now();clearTimeout(save.nt);save.nt=setTimeout(save,500);return}
+ if(el.id==="nq"){S.nq=el.value;const p=el.selectionStart;render();const x=$("#nq");if(x){x.focus();try{x.setSelectionRange(p,p)}catch(_){}}return}
  if(el.id==="jq"){S.jq=el.value;const p=el.selectionStart;render();const n=$("#jq");if(n){n.focus();try{n.setSelectionRange(p,p)}catch(_){}}return}
  if(el.dataset.bind==="form.note"&&S.sheet==="mood"){const h=document.querySelector("#sheet .hint");if(h)h.textContent=el.value.length+"/140 · Lines show up in your journal, year in pixels and recaps."}
  if(el.dataset.tf){const x=S.todos.find(y=>y.id==el.dataset.id);if(x){x[el.dataset.tf]=el.value;if(el.dataset.tf==="d"&&!el.value)x.d=iso(T);save()}return}
@@ -982,7 +1040,7 @@ document.addEventListener("input",e=>{const el=e.target;
 document.addEventListener("change",e=>{if(e.target.id==="rfile"&&e.target.files&&e.target.files[0]){readRestore(e.target.files[0]);return}const b=e.target.dataset.bind;if(["reviewT","remT","morningT","habitNudgeT"].includes(b)||e.target.dataset.tf==="d")render()});
 let swiped=0;
 document.addEventListener("click",async e=>{const a=e.target.closest("[data-a]");if(!a||a.disabled)return;if(Date.now()-swiped<350&&a.closest(".tdo"))return;const D=a.dataset,A=D.a,id=+D.id,f=S.form;
- if(A==="tab"){if(D.t==="more"&&S.tab!=="more"&&S.tab!=="ach"&&S.tab!=="wardrobe")S.prev=S.tab;if(D.t==="wardrobe"&&S.tab!=="wardrobe"){S.wFrom=S.tab;S.wPrev=null}S.tab=D.t;S.sub=null;S.openP=S.openT=S.openG=null;scrollTo(0,0)}
+ if(A==="tab"){if(S.openN!=null){const n=S.notes.find(x=>x.id===S.openN);if(n&&!(n.t||"").trim()&&!(n.b||"").trim()&&!(n.items||[]).some(x=>x.t.trim()))S.notes=S.notes.filter(x=>x.id!==n.id);S.openN=null}if(D.t==="more"&&S.tab!=="more"&&S.tab!=="ach"&&S.tab!=="wardrobe")S.prev=S.tab;if(D.t==="wardrobe"&&S.tab!=="wardrobe"){S.wFrom=S.tab;S.wPrev=null}S.tab=D.t;S.sub=null;S.openP=S.openT=S.openG=null;scrollTo(0,0)}
  else if(A==="sub"){S.sub=D.v||null;scrollTo(0,0)}
  else if(A==="tv"){S.tv=D.v;S.openT=null}else if(A==="pf"){S.pf=D.v;S.openP=null}else if(A==="gp"){S.gp=D.v;S.openG=null}
  else if(A==="mode")S.mode=D.m;else if(A==="hm")S.hm=D.v;else if(A==="mood")S.mood=+D.v;
@@ -1005,6 +1063,19 @@ document.addEventListener("click",async e=>{const a=e.target.closest("[data-a]")
  else if(A==="wrapclose"){closeWrap();render();return}
  else if(A==="wrapmute"){S.muteRecap=!S.muteRecap;if(S.muteRecap)musicStop();else musicStart();save();const b=$("#story .wmute");if(b)b.textContent=S.muteRecap?"♪ off":"♪ on";return}
  else if(A==="celeok"){celebrate();return}
+ else if(A==="nnew"){const n={id:nid(),t:"",b:"",kind:D.v==="list"?"list":"text",items:[],pin:false,c:Date.now(),up:Date.now()};S.notes=(S.notes||[]).concat(n);S.openN=n.id;S.tab="todo";S.tv="notes";S.sheet=null;scrollTo(0,0);render();setTimeout(()=>{const e=document.querySelector(".ntitle");if(e)e.focus()},50);return}
+ else if(A==="nopen"){S.openN=id;scrollTo(0,0)}
+ else if(A==="nclose"){const n=S.notes.find(x=>x.id===S.openN);if(n&&!(n.t||"").trim()&&!(n.b||"").trim()&&!(n.items||[]).some(x=>x.t.trim()))S.notes=S.notes.filter(x=>x.id!==n.id);S.openN=null}
+ else if(A==="npin"){const n=S.notes.find(x=>x.id===S.openN);n.pin=!n.pin;buzz("tap")}
+ else if(A==="ndel"){const i=S.notes.findIndex(x=>x.id===S.openN);noteUndo={n:S.notes[i],i};S.notes.splice(i,1);S.openN=null;toast("<div class='tact'><span><b>Note deleted</b></span><button class='btn s' data-a='nundo'>Undo</button></div>")}
+ else if(A==="nundo"){if(noteUndo){S.notes.splice(noteUndo.i,0,noteUndo.n);noteUndo=null;$("#sys").classList.remove("show")}}
+ else if(A==="ntask"){const n=S.notes.find(x=>x.id===S.openN);const subs=n.kind==="list"?(n.items||[]).filter(i=>i.t.trim()).map(i=>({t:i.t,done:!!i.done})):[];S.todos.push({id:nid(),t:noteTitle(n),d:iso(T),rem:"",rep:"none",star:false,subs,done:false,ord:maxOrd()+1});buzz("done");toast("<b>Added to today’s to-dos</b><p class='sm'>"+esc(noteTitle(n))+(subs.length?" · "+subs.length+" steps":"")+"</p>")}
+ else if(A==="nitem"){const n=S.notes.find(x=>x.id===S.openN),it=n.items[+D.v];it.done=!it.done;n.up=Date.now();buzz(it.done?"done":"tap")}
+ else if(A==="nidel"){const n=S.notes.find(x=>x.id===S.openN);n.items.splice(+D.v,1);n.up=Date.now()}
+ else if(A==="niclear"){const n=S.notes.find(x=>x.id===S.openN);n.items=n.items.filter(i=>!i.done);n.up=Date.now()}
+ else if(A==="nkind"){const n=S.notes.find(x=>x.id===S.openN);n.items=(n.b||"").split("\n").map(l=>l.replace(/^\s*[-*•○]\s*/,"").trim()).filter(Boolean).map(t=>({t,done:false}));n.b="";n.kind="list";n.up=Date.now()}
+ else if(A==="festtog"){S.festOff=S.festOff||[];S.festOff=a.checked?S.festOff.filter(x=>x!==D.v):S.festOff.concat(D.v)}
+ else if(A==="festcat"){S.festCats={big:true,nat:true,fam:true,other:false,...(S.festCats||{})};S.festCats[D.v]=S.festCats[D.v]===false;buzz("tap")}
  else if(A==="ston"){S.stOn=true;save();try{const w=plug("BirdieWidgets");const st=await w.usageStatus();UST.perm=!!st.granted;if(!UST.perm)await w.usageOpenSettings();else refreshUsage()}catch(e){}}
  else if(A==="stoff"){S.stOn=false}
  else if(A==="goscreen"){S.tab="habits";S.sub="screen";scrollTo(0,0)}
@@ -1137,6 +1208,7 @@ function moveDrag(y){const sib=[...drag.list.querySelectorAll(":scope>.swr")].fi
  if(tgt){if(mode==="b")drag.list.insertBefore(drag.w,tgt);else tgt.after(drag.w)}if(y<90)scrollBy(0,-10);else if(y>innerHeight-150)scrollBy(0,10)}
 function endDrag(){S.tipSeen=true;const ids=[...drag.list.querySelectorAll(".tdo[data-sw]:not(.dn)")].map(z=>+z.dataset.sw);ids.forEach((id,i)=>{const x=S.todos.find(y=>y.id===id);if(x)x.ord=i+1});drag.w.classList.remove("lift");document.body.classList.remove("dragging");drag=null;swiped=Date.now();render()}
 document.addEventListener("touchmove",e=>{if(drag)e.preventDefault()},{passive:false});
+document.addEventListener("keydown",e=>{if(e.target&&e.target.id==="niadd"&&e.key==="Enter"){const v=e.target.value.trim();if(!v)return;e.preventDefault();const n=(S.notes||[]).find(x=>x.id===S.openN);if(!n)return;n.items=(n.items||[]).concat({t:v,done:false});n.up=Date.now();save();render();const a=$("#niadd");if(a)a.focus()}});
 document.addEventListener("contextmenu",e=>{if(e.target.closest(".tdo"))e.preventDefault()});
 document.addEventListener("pointermove",e=>{if(drag){e.preventDefault();moveDrag(e.clientY);return}if(lp&&(Math.abs(e.clientX-lp.x)>8||Math.abs(e.clientY-lp.y)>8)){clearTimeout(lp.t);lp=null}if(!sw)return;const dx=e.clientX-sw.x,dy=e.clientY-sw.y;if(!sw.on){if(Math.abs(dx)>12&&Math.abs(dx)>Math.abs(dy)*1.5){sw.on=true;sw.r.style.transition="none";try{sw.r.setPointerCapture(sw.pid)}catch(_){}}else if(Math.abs(dy)>12){sw=null;return}else return}
  sw.dx=dx;sw.r.style.transform=`translateX(${dx}px)`;const p=sw.r.parentNode,l=p.querySelector(".swl"),rr=p.querySelector(".swrr");if(l)l.style.opacity=dx>0?Math.min(1,dx/90):0;if(rr)rr.style.opacity=dx<0?Math.min(1,-dx/90):0});
@@ -1153,6 +1225,6 @@ if(S.birdMsg&&S.birdMsg.seen)S.birdMsg=null;
 const hasData=!!(S.todos.length||S.habits.length||S.moods.length||S.people.length||S.reminders.length||S.tx.length||S.w.length||S.sleep.length);
 if(!S.onboarded&&hasData)S.onboarded=true;
 if(S.owned==null){const v4=["party","shades","scarf","beanie","bow","bowtie","specs","phones","flower","chain","hearts","crown","wizard"],lv=xpInfo().lvl;S.owned=OUTFITS.filter(o=>v4.includes(o.id)&&o.lvl<=lv).map(o=>o.id);Object.values(S.outfit||{}).forEach(id=>{if(id&&!S.owned.includes(id))S.owned.push(id)})}
-if(S.verSeen!==APP_VER){if(S.onboarded&&hasData)S.birdMsg={m:"wow",t:"New update! I can show your screen time now and turn app limits into habits that tick themselves. Have a look in Habits → Screen time 📱"};S.verSeen=APP_VER}
+if(S.verSeen!==APP_VER){if(S.onboarded&&hasData)S.birdMsg={m:"wow",t:"New update! Screen time in Habits 📱, notes in your To-do tab 📝, and I’ll wish you on every festival 🪔"};S.verSeen=APP_VER}
 if(!native()&&"serviceWorker"in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});
 render();initNative();if(S.sleepAt&&Date.now()-S.sleepAt>12*36e5)setTimeout(()=>{if(!S.sheet&&S.sleepAt){const st=new Date(S.sleepAt),e=new Date();openSheet("wakefix",{b:hm(st),w:hm(e),d:iso(e)})}},900);
