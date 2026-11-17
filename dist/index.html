@@ -409,6 +409,28 @@ body.obmode .nav,body.obmode #fab{display:none!important}
 .sprof small{display:block;line-height:1.35}
 .seg button{white-space:nowrap}
 .sfun{margin-bottom:12px}
+
+/* v15: mood colours, screen time, footer */
+:root{--m1:#E5484D;--m2:#F2804B;--m3:#F5C542;--m4:#9BD25B;--m5:#3DBE6E}
+.pix i[data-v],.pleg i[data-v],.jrow i[data-v]{background:var(--m3)}
+.pix i[data-v="1"],.pleg i[data-v="1"],.jrow i[data-v="1"]{background:var(--m1)}.pix i[data-v="2"],.pleg i[data-v="2"],.jrow i[data-v="2"]{background:var(--m2)}
+.pix i[data-v="4"],.pleg i[data-v="4"],.jrow i[data-v="4"]{background:var(--m4)}.pix i[data-v="5"],.pleg i[data-v="5"],.jrow i[data-v="5"]{background:var(--m5)}
+.sfoot{text-align:center;margin:22px 0 10px;font-size:.82rem;color:var(--mut);line-height:1.7}.sfoot span{font-weight:800;color:var(--ink)}
+.sthome{width:100%;display:flex;align-items:center;gap:12px;font:inherit;color:var(--ink);text-align:left;cursor:pointer}.sthome b{display:block}.sthome small{display:block;color:var(--mut);font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sthome .g{min-width:0}
+.stbars{display:flex;align-items:flex-end;gap:3px;height:34px;flex-shrink:0}.stbars i{width:6px;border-radius:3px;background:color-mix(in srgb,#5DB0FF 45%,var(--line))}.stbars i.now{background:#5DB0FF}
+.sttop .stbars{height:70px;gap:8px;margin-top:16px;justify-content:space-between}.sttop .stbars i{flex:1;width:auto;border-radius:6px}
+.stdays{display:flex;justify-content:space-between;gap:8px;margin-top:6px}.stdays span{flex:1;text-align:center;font-size:.72rem;color:var(--mut);font-weight:700}
+.sthuge{font-size:2.6rem;font-weight:900;letter-spacing:-.02em;line-height:1.1;margin:2px 0 4px}
+.good{color:var(--m5)}.bad{color:var(--m1)}
+.ststats{gap:8px}.ststats .box{margin:0;text-align:center;padding:12px 6px}.ststats b{display:block;font-size:1.05rem}.ststats small{color:var(--mut);font-size:.75rem}
+.g3{display:grid;grid-template-columns:repeat(3,1fr)}
+.stapp .g{min-width:0}.stapp .bar,.list .r .bar{height:6px;margin-top:6px}.stapp .bar i{background:#5DB0FF}.bar.over i{background:var(--m1)}
+.adot{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-weight:900;color:#fff;background:var(--c);flex-shrink:0}
+.stintro{text-align:center;padding:22px 18px}.stintro h2{margin:8px 0 6px}.stlist{text-align:left;margin:12px 0 0;padding:0;list-style:none;display:grid;gap:8px}.stlist li{font-size:.92rem}
+.stsleep{display:flex;align-items:center;gap:10px}.stsleep .g{min-width:0}.stsleep b{display:block}.stsleep small{color:var(--mut);font-size:.8rem}.stsleep .xb{position:static;flex-shrink:0}
+.stsug{width:100%;text-align:left;font:inherit;color:var(--ink);cursor:pointer;margin:6px 0 4px;border-color:#5DB0FF}.stsug b{display:block}.stsug small{color:var(--mut)}
+#story .scrtop{margin:18px 0 6px;display:grid;gap:8px;text-align:left}#story .scrtop p{font-size:1.15rem;margin:0;display:flex;gap:8px}#story .scrtop span{margin-left:auto;opacity:.8}
+.stapp .iconbtn{width:34px;height:34px;border:0;background:none;color:var(--mut)}.stapp .iconbtn svg{width:20px;height:20px;fill:none!important;stroke:currentColor!important}
 </style></head><body>
 <div class="sys" id="sys" role="status" aria-live="polite"></div><main id="app"></main><button class="fab" id="fab" data-a="fab" aria-label="Add"><svg viewBox="0 0 24 24"><path d="M12 5v14 M5 12h14"/></svg></button><nav class="nav" aria-label="Main"><div id="nav"></div></nav><div class="ov" id="ov" data-a="ov"></div><div id="picker"></div><div id="cele" role="dialog" aria-modal="true" aria-label="Achievement"></div><div id="story" role="dialog" aria-modal="true" aria-label="Recap"></div><div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-hidden="true"></div>
 <script src="config.js"></script>

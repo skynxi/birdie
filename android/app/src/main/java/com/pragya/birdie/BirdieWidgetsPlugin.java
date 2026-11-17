@@ -211,4 +211,120 @@ public class BirdieWidgetsPlugin extends Plugin {
             JSObject r = new JSObject(); r.put("data", new String(b, 0, off, "UTF-8")); call.resolve(r);
         } catch (Exception e) { call.reject("Couldn’t read that backup"); }
     }
+
+    /* ---------- screen time (Usage access, the data Digital Wellbeing uses) ---------- */
+    private boolean usageAllowed() {
+        try {
+            android.app.AppOpsManager ops = (android.app.AppOpsManager) getContext().getSystemService(android.content.Context.APP_OPS_SERVICE);
+            int mode = android.os.Build.VERSION.SDK_INT >= 29
+                ? ops.unsafeCheckOpNoThrow(android.app.AppOpsManager.OPSTR_GET_USAGE_STATS, android.os.Process.myUid(), getContext().getPackageName())
+                : ops.checkOpNoThrow(android.app.AppOpsManager.OPSTR_GET_USAGE_STATS, android.os.Process.myUid(), getContext().getPackageName());
+            return mode == android.app.AppOpsManager.MODE_ALLOWED;
+        } catch (Exception e) { return false; }
+    }
+
+    @PluginMethod
+    public void usageStatus(PluginCall call) { JSObject r = new JSObject(); r.put("granted", usageAllowed()); call.resolve(r); }
+
+    @PluginMethod
+    public void usageOpenSettings(PluginCall call) {
+        android.content.Intent i = new android.content.Intent(android.provider.Settings.ACTION_USAGE_ACCESS_SETTINGS);
+        if (android.os.Build.VERSION.SDK_INT >= 29) i.setData(android.net.Uri.parse("package:" + getContext().getPackageName()));
+        i.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+        try { getContext().startActivity(i); }
+        catch (Exception e) { android.content.Intent j = new android.content.Intent(android.provider.Settings.ACTION_USAGE_ACCESS_SETTINGS); j.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK); getContext().startActivity(j); }
+        call.resolve();
+    }
+
+    private String appLabel(String pkg, java.util.HashMap<String, String> cache) {
+        if (cache.containsKey(pkg)) return cache.get(pkg);
+        String n = pkg;
+        try { android.content.pm.PackageManager pm = getContext().getPackageManager(); n = pm.getApplicationLabel(pm.getApplicationInfo(pkg, 0)).toString(); } catch (Exception e) { }
+        cache.put(pkg, n); return n;
+    }
+
+    /** Per day: total phone time, time per app, unlocks, first pickup and last use. */
+    @PluginMethod
+    public void usageDays(final PluginCall call) {
+        if (!usageAllowed()) { call.reject("no-permission"); return; }
+        final int days = Math.max(1, Math.min(14, call.getInt("days", 7)));
+        new Thread(() -> {
+            try {
+                android.app.usage.UsageStatsManager um = (android.app.usage.UsageStatsManager) getContext().getSystemService(android.content.Context.USAGE_STATS_SERVICE);
+                android.content.pm.PackageManager pm = getContext().getPackageManager();
+                java.util.HashSet<String> skip = new java.util.HashSet<>();
+                android.content.Intent home = new android.content.Intent(android.content.Intent.ACTION_MAIN).addCategory(android.content.Intent.CATEGORY_HOME);
+                for (android.content.pm.ResolveInfo ri : pm.queryIntentActivities(home, 0)) skip.add(ri.activityInfo.packageName);
+                skip.add("com.android.systemui"); skip.add("android");
+                java.util.HashMap<String, String> labels = new java.util.HashMap<>();
+                java.text.SimpleDateFormat fmt = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US);
+                com.getcapacitor.JSArray out = new com.getcapacitor.JSArray();
+                java.util.Calendar cal = java.util.Calendar.getInstance();
+                cal.set(java.util.Calendar.HOUR_OF_DAY, 0); cal.set(java.util.Calendar.MINUTE, 0); cal.set(java.util.Calendar.SECOND, 0); cal.set(java.util.Calendar.MILLISECOND, 0);
+                long now = System.currentTimeMillis();
+                for (int d = 0; d < days; d++) {
+                    long start = cal.getTimeInMillis();
+                    java.util.Calendar e = (java.util.Calendar) cal.clone(); e.add(java.util.Calendar.DATE, 1);
+                    long end = Math.min(e.getTimeInMillis(), now);
+                    java.util.HashMap<String, Long> per = new java.util.HashMap<>();
+                    android.app.usage.UsageEvents ev = um.queryEvents(start, end);
+                    android.app.usage.UsageEvents.Event x = new android.app.usage.UsageEvents.Event();
+                    String cur = null; long since = 0; int unlocks = 0; long first = 0, last = 0;
+                    while (ev.hasNextEvent()) {
+                        ev.getNextEvent(x);
+                        int t = x.getEventType(); long ts = x.getTimeStamp(); String pk = x.getPackageName();
+                        if (t == 1) { // activity resumed
+                            if (cur != null && !cur.equals(pk)) per.put(cur, per.getOrDefault(cur, 0L) + (ts - since));
+                            if (cur == null || !cur.equals(pk)) { cur = pk; since = ts; }
+                            if (!skip.contains(pk)) { if (first == 0) first = ts; last = ts; }
+                        } else if (t == 2 || t == 23) { // paused / stopped
+                            if (cur != null && cur.equals(pk)) { per.put(cur, per.getOrDefault(cur, 0L) + (ts - since)); last = Math.max(last, ts); cur = null; }
+                        } else if (t == 16) { // screen off
+                            if (cur != null) { per.put(cur, per.getOrDefault(cur, 0L) + (ts - since)); last = Math.max(last, ts); cur = null; }
+                        } else if (t == 18) { unlocks++; } // keyguard hidden
+                    }
+                    if (cur != null) per.put(cur, per.getOrDefault(cur, 0L) + (end - since));
+                    long total = 0;
+                    java.util.ArrayList<java.util.Map.Entry<String, Long>> list = new java.util.ArrayList<>();
+                    for (java.util.Map.Entry<String, Long> en : per.entrySet()) { if (skip.contains(en.getKey()) || en.getValue() < 60000) continue; total += en.getValue(); list.add(en); }
+                    list.sort((a, b) -> Long.compare(b.getValue(), a.getValue()));
+                    com.getcapacitor.JSArray apps = new com.getcapacitor.JSArray();
+                    for (int i = 0; i < Math.min(12, list.size()); i++) { JSObject a = new JSObject(); a.put("pkg", list.get(i).getKey()); a.put("name", appLabel(list.get(i).getKey(), labels)); a.put("min", Math.round(list.get(i).getValue() / 60000.0)); apps.put(a); }
+                    JSObject o = new JSObject();
+                    o.put("d", fmt.format(new java.util.Date(start))); o.put("total", Math.round(total / 60000.0)); o.put("unlocks", unlocks); o.put("first", first); o.put("last", last); o.put("apps", apps);
+                    out.put(o);
+                    cal.add(java.util.Calendar.DATE, -1);
+                }
+                JSObject r = new JSObject(); r.put("days", out); call.resolve(r);
+            } catch (Exception e) { call.reject(e.getMessage() == null ? "Couldn’t read screen time" : e.getMessage()); }
+        }).start();
+    }
+
+    /** Last night: the longest stretch the screen stayed off between 8 PM and 2 PM. */
+    @PluginMethod
+    public void usageSleep(final PluginCall call) {
+        if (!usageAllowed()) { call.reject("no-permission"); return; }
+        new Thread(() -> {
+            try {
+                android.app.usage.UsageStatsManager um = (android.app.usage.UsageStatsManager) getContext().getSystemService(android.content.Context.USAGE_STATS_SERVICE);
+                java.util.Calendar c = java.util.Calendar.getInstance();
+                c.set(java.util.Calendar.HOUR_OF_DAY, 20); c.set(java.util.Calendar.MINUTE, 0); c.set(java.util.Calendar.SECOND, 0); c.set(java.util.Calendar.MILLISECOND, 0);
+                c.add(java.util.Calendar.DATE, -1);
+                long from = c.getTimeInMillis(), to = Math.min(from + 18L * 3600000L, System.currentTimeMillis());
+                android.app.usage.UsageEvents ev = um.queryEvents(from, to);
+                android.app.usage.UsageEvents.Event x = new android.app.usage.UsageEvents.Event();
+                long offAt = from, bestStart = 0, bestEnd = 0; boolean on = false;
+                while (ev.hasNextEvent()) {
+                    ev.getNextEvent(x);
+                    int t = x.getEventType(); long ts = x.getTimeStamp();
+                    if (t == 15 || t == 18 || t == 1) { // screen on / unlock / app opened
+                        if (!on) { if (ts - offAt > bestEnd - bestStart) { bestStart = offAt; bestEnd = ts; } on = true; }
+                    } else if (t == 16) { on = false; offAt = ts; }
+                }
+                JSObject r = new JSObject();
+                if (bestEnd - bestStart >= 3L * 3600000L) { r.put("bed", bestStart); r.put("wake", bestEnd); }
+                call.resolve(r);
+            } catch (Exception e) { call.reject("Couldn’t read screen time"); }
+        }).start();
+    }
 }
