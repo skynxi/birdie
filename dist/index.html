@@ -453,6 +453,25 @@ body.obmode .nav,body.obmode #fab{display:none!important}
 .frow small{display:block;color:var(--mut);font-size:.78rem}.frow.off b{color:var(--mut)}.frow.off .femo{filter:grayscale(1);opacity:.5}
 .srow1{width:100%;display:flex;align-items:center;gap:12px;font:inherit;color:var(--ink);text-align:left;cursor:pointer}.srow1 b{display:block}.srow1 small{display:block;color:var(--mut);font-size:.8rem}
 .nacts .iconbtn svg{width:20px!important;height:20px!important}.nitem>.ncheck{flex:0 0 26px;box-sizing:border-box}
+
+/* v17: bookshelf */
+.bkimg{border-radius:4px 7px 7px 4px;box-shadow:2px 3px 8px #0006;flex-shrink:0;aspect-ratio:2/3;object-fit:cover;background:var(--line)}
+.bkgen{display:flex;align-items:flex-end;flex-shrink:0;aspect-ratio:2/3;border-radius:4px 7px 7px 4px;background:linear-gradient(90deg,#0003 0 6%,transparent 6% 100%),var(--c);color:#fff;font-size:.55rem;font-weight:900;line-height:1.15;padding:4px 4px 5px 7px;overflow:hidden;box-shadow:2px 3px 8px #0006;text-shadow:0 1px 2px #0004;word-break:break-word}
+.sthome .bar{display:block;height:5px;margin-top:6px;border-radius:3px;background:var(--line);overflow:hidden}.sthome .bar i{display:block;height:100%}
+.bkcard{display:flex;gap:14px;align-items:flex-start}.bkcard .g{min-width:0;flex:1}.bkcard b{display:block;font-size:1.05rem;line-height:1.25}.bkcard small{display:block;color:var(--mut);font-size:.8rem;margin-top:2px}
+.bkcard .bar{height:7px;margin:10px 0 4px}.bkcard .bar i{background:#B98CFF}.bkbtns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.shelf{display:flex;align-items:flex-end;gap:4px;overflow-x:auto;padding:14px 10px 0;margin-top:4px;scrollbar-width:none}
+.spine{flex:0 0 auto;width:30px;border:0;border-radius:3px 3px 1px 1px;background:linear-gradient(90deg,#fff2 0 12%,transparent 12% 85%,#0002 85%),var(--c);color:#fff;font:inherit;font-size:.62rem;font-weight:900;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:6px 0 5px;box-shadow:inset 0 -3px 0 #0002}
+.spine span{writing-mode:vertical-rl;transform:rotate(180deg);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-height:calc(100% - 16px);text-shadow:0 1px 2px #0004}
+.spine i{font-style:normal;font-size:.45rem;letter-spacing:-1px;color:#FFE36B}
+.spine:nth-child(3n){width:26px}.spine:nth-child(4n+1){width:34px}
+.shelfboard{height:12px;border-radius:3px;background:linear-gradient(#A0622D,#6B3E1A);box-shadow:0 4px 10px #0005;margin:0 0 12px}
+.bkrev{font-style:italic;margin:6px 4px}
+.bkres{display:grid;gap:6px;margin-top:8px}.bkres:empty{display:none}
+.bkhit{display:flex;gap:10px;align-items:center;text-align:left;padding:8px;border-radius:12px;border:1px solid var(--line);background:var(--s);font:inherit;color:var(--ink);cursor:pointer}
+.bkhit img{width:30px;aspect-ratio:2/3;object-fit:cover;border-radius:3px;flex-shrink:0;background:var(--line)}.bkhit b{display:block;font-size:.9rem}.bkhit small{display:block;color:var(--mut);font-size:.75rem}.bkhit .g{min-width:0}
+.bkph{display:flex;gap:14px;align-items:center}
+.stars{display:flex;gap:6px}.stars button{border:0;background:none;font-size:2rem;color:var(--line);cursor:pointer;padding:0 2px;line-height:1}.stars button.on{color:#FFC94A}
 </style></head><body>
 <div class="sys" id="sys" role="status" aria-live="polite"></div><main id="app"></main><button class="fab" id="fab" data-a="fab" aria-label="Add"><svg viewBox="0 0 24 24"><path d="M12 5v14 M5 12h14"/></svg></button><nav class="nav" aria-label="Main"><div id="nav"></div></nav><div class="ov" id="ov" data-a="ov"></div><div id="picker"></div><div id="cele" role="dialog" aria-modal="true" aria-label="Achievement"></div><div id="story" role="dialog" aria-modal="true" aria-label="Recap"></div><div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-hidden="true"></div>
 <script src="config.js"></script>
