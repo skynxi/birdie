@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="birdie_bg">#141016</color>
+    <color name="birdie_surface">#1E1820</color>
+    <color name="w_bg">#1E1820</color>
+    <color name="w_ink">#F7EFE8</color>
+    <color name="w_mut">#B3A7A0</color>
+    <color name="w_acc">#FF8A2B</color>
+    <color name="w_ok">#FF8A2B</color>
+    <color name="w_bad">#FF6B6B</color>
+    <color name="w_line">#2E2630</color>
+    <bool name="light_bars">false</bool>
+</resources>

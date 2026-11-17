@@ -1,0 +1,17 @@
+# never upload the signing key or its passwords
+keys/
+*.jks
+*.keystore
+android/keystore.properties
+
+node_modules/
+android/local.properties
+android/.gradle/
+android/build/
+android/app/build/
+android/capacitor-cordova-android-plugins/build/
+ios/App/App/public/
+ios/DerivedData/
+*.apk
+*.ipa
+.DS_Store

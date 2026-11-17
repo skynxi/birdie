@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Birdie</string>
+    <string name="title_activity_main">Birdie</string>
+    <string name="package_name">com.pragya.birdie</string>
+    <string name="custom_url_scheme">com.pragya.birdie</string>
+    <string name="w_today_desc">Today’s to-dos. Tap one to cross it off.</string>
+    <string name="w_coming_desc">Your next birthday or date, and your next follow-up.</string>
+</resources>

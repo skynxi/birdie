@@ -1,0 +1,20 @@
+{
+  "appId": "com.pragya.birdie",
+  "appName": "Birdie",
+  "webDir": "dist",
+  "android": {
+    "adjustMarginsForEdgeToEdge": "force",
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_birdie",
+      "iconColor": "#FF8A2B"
+    }
+  },
+  "ios": {
+    "backgroundColor": "#141016",
+    "contentInset": "never"
+  },
+  "backgroundColor": "#141016"
+}
