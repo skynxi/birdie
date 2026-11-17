@@ -31,22 +31,18 @@ It is built with [Capacitor](https://capacitorjs.com): the app itself is plain H
 
 ## Releasing an Android update
 
-**Without the key on GitHub (current setup):** build the APK locally (see "Building locally" below), then create a release on GitHub named after the version (for example `v5.3.0`) and attach the `.apk` file. The tag-triggered workflow skips the build when the key isn't set, so it never fails.
+Birdie checks `updates/latest.json` in this repo every time it opens. To ship a new version:
 
-**With the key on GitHub:**
+1. Build the signed APK (see "Building locally") with a higher `VERSION_NAME`, e.g. `5.4.0`.
+2. Put it in `updates/` as `Birdie-5.4.0.apk` and delete the previous APK.
+3. Update `updates/latest.json`: `version`, `title`, `apk`, `size` (bytes) and `notes` (a list of short lines shown in the update pop-up).
+4. Commit and push to `main`.
 
-```bash
-git add . && git commit -m "What changed"
-git tag v5.2.0
-git push && git push origin v5.2.0
-```
+Phones see the new version on their next launch and offer Update now / Remind me later / Don't show again. Data stays because the APK is signed with the same key.
 
-GitHub builds a signed APK and attaches it to a release named after the tag. Edit the release notes on GitHub if you like: Birdie shows them in the update screen.
+Version numbers must always go up (`5.3.0` → `5.3.1` or `5.4.0`).
 
-On the phone, open **Settings → App updates → Check for updates → Download and install**. The first time, Android asks you to allow installs from Birdie. Data stays, because the key is the same.
-Birdie also checks once a day and puts a dot on the settings gear when a new version is out.
-
-Version numbers: always go up (`v5.2.0`, then `v5.2.1` or `v5.3.0` …). Tags must look like `vMAJOR.MINOR.PATCH`.
+GitHub Releases also work: Birdie falls back to the latest release with an `.apk` attached if `latest.json` is missing.
 
 ## iPhone
 

@@ -13,5 +13,6 @@ android/capacitor-cordova-android-plugins/build/
 ios/App/App/public/
 ios/DerivedData/
 *.apk
+!updates/*.apk
 *.ipa
 .DS_Store

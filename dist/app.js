@@ -672,7 +672,15 @@ async function curVer(){if(native()){try{const i=await plug("App").getInfo();CUR
 const updRender=()=>{if(S.tab==="more"&&!S.sheet)render()};
 async function checkUpdate(manual){if(manual)S.updLater=0;const repo=REPO();if(!/^[\w.-]+\/[\w.-]+$/.test(repo)){if(manual){UPD={state:"error",msg:"Type your GitHub repo as username/repo-name first."};updRender()}return}
  if(UPD.state==="checking"||UPD.state==="downloading")return;UPD={state:"checking"};if(manual)updRender();
- try{const cur=await curVer();const r=await fetch("https://api.github.com/repos/"+repo+"/releases/latest",{headers:{Accept:"application/vnd.github+json"},cache:"no-store"});
+ try{const cur=await curVer();
+  // 1) update file pushed to the repo (updates/latest.json + the APK next to it)
+  try{const raw="https://raw.githubusercontent.com/"+repo+"/main/";const f=await fetch(raw+"updates/latest.json?t="+Date.now(),{cache:"no-store"});
+   if(f.ok){const j=await f.json();S.updChecked=Date.now();const url=j.apk?(/^https?:/.test(j.apk)?j.apk:raw+j.apk):null;
+    if(j.version&&vnum(j.version)>vnum(cur.version)){UPD={state:"avail",tag:"v"+String(j.version).replace(/^v/,""),title:j.title||("Birdie "+j.version),notes:Array.isArray(j.notes)?j.notes.map(x=>"- "+x).join("\n"):(j.notes||""),url,size:j.size||0,page:"https://github.com/"+repo,date:j.date||""};if(!manual)updPrompt()}
+    else UPD={state:"none",tag:j.version?"v"+j.version:""};
+    save();if(manual)updRender();else if(UPD.state==="avail")render();return}}catch(e){}
+  // 2) GitHub releases
+  const r=await fetch("https://api.github.com/repos/"+repo+"/releases/latest",{headers:{Accept:"application/vnd.github+json"},cache:"no-store"});
   if(r.status===404){UPD={state:"none",tag:""};S.updChecked=Date.now();save();if(manual)updRender();return}
   if(r.status===403)throw new Error("GitHub is limiting requests right now. Try again in an hour.");
   if(!r.ok)throw new Error("GitHub answered with error "+r.status+".");
